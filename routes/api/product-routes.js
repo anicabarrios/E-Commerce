@@ -7,7 +7,7 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
   router.get('/', async (req, res) => {
     try {
       const products = await Product.findAll({
-        include: [{ model: Category }, { model: Tag, through: ProductTag }]
+        include: [{ model: Category }, { model: Tag}]
       });
       res.json(products);
     } catch (err) {
@@ -19,7 +19,7 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 router.get('/:id', async (req, res) => {
   try {
     const product = await Product.findByPk(req.params.id, {
-      include: [{ model: Category }, { model: Tag, through: ProductTag }]
+      include: [{ model: Category }, { model: Tag }]
     });
     if (!product) {
       res.status(404).json({ message: 'Product not found' });
@@ -63,7 +63,7 @@ router.post('/', (req, res) => {
     });
 });
 
-// update products
+// update product
 router.put('/:id', (req, res) => {
   // update product data
   Product.update(req.body, {
@@ -111,19 +111,23 @@ router.put('/:id', (req, res) => {
 // Delete products
 router.delete('/:id', async (req, res) => {
   try {
-    const deletedProduct = await Product.destroy({
-      where: {
-        id: req.params.id
-      }
-    });
-
-    if (!deletedProduct) {
+    const product = await Product.findByPk(req.params.id);
+    if (!product) {
       res.status(404).json({ message: 'Product not found' });
       return;
     }
 
+    await ProductTag.destroy({
+      where: { product_id: req.params.id }
+    });
+
+    await Product.destroy({
+      where: { id: req.params.id }
+    });
+
     res.status(200).json({ message: 'Product deleted successfully' });
   } catch (err) {
+    console.error(err);
     res.status(500).json(err);
   }
 });
