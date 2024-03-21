@@ -19,10 +19,6 @@ This E-Commerce backend has the API routes that point to each of the standard CR
 * [Usage](#usage)
 * [License](#license)
 
-## General Info
-We took a working Express.js API and configured it to use Sequelize to interact with a MySQL database. This application won’t be deployed so i’ll show a walkthrough video that demonstrates its functionality.<br>
-
-
 ## Technologies
 
 Project is created with 
